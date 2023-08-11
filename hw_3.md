@@ -74,7 +74,7 @@ fun loadWishlistPage() {
                 }
         }
     }
-    ```
+```
 
 Улучшенный код:
 
@@ -112,6 +112,7 @@ private fun doLoadPage(onLoadSuccess: (items: List<FulfillmentVO>) -> Unit, onLo
         )
     }
 ```
+
 Ввел в программный код концепцию стейта, реагирование на смену состояния экрана в едином месте 
 
 Пример описания стейта:
@@ -132,6 +133,7 @@ private fun doLoadPage(onLoadSuccess: (items: List<FulfillmentVO>) -> Unit, onLo
 ```
 
 Подписка на стейт:
+
 ```
     fun observeState() {
         stateFlow.asSharedFlow().onEach { state ->
@@ -172,6 +174,8 @@ private fun doLoadPage(onLoadSuccess: (items: List<FulfillmentVO>) -> Unit, onLo
         }.launchInPresenterScope()
     }
 ```
+
+
 ////////////////
 
 2) Функционал инициализации панорамного фото.
