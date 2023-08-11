@@ -9,6 +9,7 @@
 Также проблемный момент, что одна функция используется для множества кейсов и вызывается из нескольких мест.
 
 Исходный код функции для загрузки данных:
+
 ```
 fun loadWishlistPage() {
         if (!isRequestExecuting && hasMore) {
@@ -76,6 +77,7 @@ fun loadWishlistPage() {
     ```
 
 Улучшенный код:
+
 ```
 private fun doLoadPage(onLoadSuccess: (items: List<FulfillmentVO>) -> Unit, onLoadError: (t: Throwable) -> Unit) {
         if (CHANNEL_LOADING_PAGE.isActive || !hasMore) {
@@ -185,6 +187,7 @@ private fun doLoadPage(onLoadSuccess: (items: List<FulfillmentVO>) -> Unit, onLo
 4. Метод createAndGetExtractor(): Инициализирует компоненты для извлечения кадров с помощью MediaExtractor, MediaCodecHelper, MediaCodec, ShaderProgram, CodecOutputSurface и FrameExtractor.
 
 Исходный код:
+
 ```
 @CheckResult
     private fun loadVideo(cacheFile: File): Completable {
@@ -272,6 +275,7 @@ private fun doLoadPage(onLoadSuccess: (items: List<FulfillmentVO>) -> Unit, onLo
 3. Отделил инициализацию компонентов в отдельные функции, которые могут быть легко заменены или изменены при необходимости и упрощают рассуждение о функции на уровне дизайна
 
 Новая версия:
+
 ```
 private fun loadVideo(cacheFile: File): Completable {
     return Completable.fromRunnable {
@@ -320,6 +324,7 @@ private fun createAndGetExtractor(loadedFile: File): FrameExtractor {
 Исторически, кастомные view писались в императивном стиле. Но сейчас идет тренд на создание декларативных UI и в андроиде есть относительно новый гугловый фреймворк jetpack compose для создания UI в декларативной парадигме
 
 Исходный код в императивном стиле
+
 ```
 public class ViewPagerIndicator extends LinearLayout {
     private final LayoutInflater inflater;
@@ -360,7 +365,6 @@ public class ViewPagerIndicator extends LinearLayout {
         addView(indicatorItemContainer);
     }
 }
-
 ```
 
 Код в декларативной парадигме:
@@ -424,7 +428,6 @@ fun GalleryView() {
         )
     }
 }
-
 ```
 
 
