@@ -408,3 +408,147 @@ class ImageBlurrer(private val context: Context) : ImageUtil {
     }
 }
 ```
+
+**5. Было**
+
+```
+data class UserUi(
+    val id: String,
+    val name: String,
+    val email: String
+)
+
+class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
+    private val _userUi = MutableLiveData<UserUi>()
+    val userUi: LiveData<UserUi> = _userUi
+
+    fun fetchUserData() {
+        val user = userRepository.getUser()
+        
+        // Преобразование доменной модели в UI сущность
+        val userUi = UserUi(
+            id = user.id,
+            name = user.name,
+            email = user.email,
+            // ... другие поля
+        )
+        
+        _userUi.value = userUi
+    }
+}
+```
+
+**Стало**
+```
+class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
+    private val _userUi = MutableLiveData<UserUi>()
+    val userUi: LiveData<UserUi> = _userUi
+
+    private val userFormatter = UserFormatter()
+
+    fun fetchUserData() {
+        val user = userRepository.getUser()
+        val userUi = userFormatter.map(user)
+        _userUi.value = userUi
+    }
+}
+
+class UserFormatter {
+    fun map(user: User): UserUi {
+        return UserUi(
+            id = user.id,
+            name = user.name,
+            email = user.email
+        )
+    }
+}
+```
+
+**6. Было**
+
+```
+class AnalyticsManager {
+
+    fun sendEvent(eventName: String, parameters: Map<String, Any>) {
+        // Отправка аналитического события в AppMetrica
+    }
+}
+
+
+class EventsFragment : Fragment() {
+
+    private val analyticsManager = AnalyticsManager()
+
+    private fun onEventClick(event: Event) {
+        val eventId = event.id
+        val eventName = event.name
+        val durationTime = getEventDuration(event)
+
+        val parameters = mapOf(
+            "eventId" to eventId,
+            "eventName" to eventName,
+            "durationTime" to durationTime
+        )
+
+        analyticsManager.sendEvent("event_clicked", parameters)
+    }
+
+    private fun getEventDuration(event: Event): Long {
+        // Рассчитываем время продолжительности события
+        return event.endTime - event.startTime
+    }
+}
+```
+
+**Стало**
+
+```
+class EventAnalytics(private val analyticsManager: AnalyticsManager) {
+
+    fun sendEventClick(event: Event) {
+        val eventId = event.id
+        val eventName = event.name
+        val durationTime = calculateDuration(event)
+
+        val parameters = mapOf(
+            "eventId" to eventId,
+            "eventName" to eventName,
+            "durationTime" to durationTime
+        )
+
+        analyticsManager.sendEvent("event_clicked", parameters)
+    }
+
+    private fun calculateDuration(event: Event): Long {
+        return event.endTime - event.startTime
+    }
+}
+
+class EventsFragment : Fragment() {
+
+    private val eventAnalytics = EventAnalytics(AnalyticsManager())
+
+    // ...
+
+    private fun onEventClick(event: Event) {
+        eventAnalytics.sendEventClick(event)
+    }
+
+    // ...
+}
+```
+
+
+**Выводы.**
+
+SRP - принцип единственной ответственности. Часто по этому принципу оценивают только класс, что ошибочно. Также следует задаваться вопросом, соответствует ли строчка/функция/класс/модуль данному принципу. 
+В рамках текущей задачи были выбраны части приложения, в основном из Android проектов своих или коллег, которые осуществляли работу, которая выходила за рамки ответственности. Например, компонент Adapter, ответственный за исключительно отображение данных в элементе списка, осуществлял также форматирование даты. Кроме того, от этого страдала и производительность списка, так как это достаточно тяжелая операция и она производилась каждый раз, когда элемент списка показывался на экране. Также частый антипаттерн в Android проектах, когда создается *Util, *Helper класс и в нем происходит некоторая вспомогательная работа. Даже бывает просто класс Utils, куда добавляют почти все: и смену потока на UI, и форматирование строк, и работу с изображениями, и т.д. По существу непонятно, что именно за методы в этом классе, что является причиной разрастания такого класса до больших размеров.
+
+Кстати говоря, в Android есть очень важный класс Context из Android SDK, через который происходит работа "со всем и вся". Этот класс также нарушает принцип SRP. Кроме того, в виду того, что это God-object класс, и который часто требуется использовать где-то вне класса, отвечающего за отображение данных, часто случаются серьезные утечки памяти из-за передачи объекта этого класса и сохранение ссылки на него. Вот еще одна из проблем God-object класса, нарушающего принцип SRP. 
+
+В целом, при проектировании класса или при внесении изменений в существующий, полезно задавать себе вопрос "Что делает этот класс, за что он ответственен, станет ли понимание назначения класса хуже, после внесении изменений?".
+
+
+
+
+
