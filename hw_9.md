@@ -211,3 +211,119 @@ class CorrencyRepository : CoroutineScope {
     }
 }
 ```
+
+**3. Было**
+
+```
+class MessagesAdapter(
+    private val myUsername: String
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    private val messages = mutableListOf<Message>()
+    
+    
+    companion object {
+        private val MESSAGE_TYPE = 0
+        private val MY_MESSAGE_TYPE = 1
+    }
+
+    val lastMessageId get() = messages.lastOrNull()?.id ?: 0
+
+    fun addMessages(newMessages: List<Message>){
+        val startIndex = messages.size
+        messages.addAll(newMessages)
+        notifyItemRangeInserted(startIndex, newMessages.size)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if (viewType == MY_MESSAGE_TYPE) {
+            val vMyMessage =
+                LayoutInflater.from(parent.context).inflate(R.layout.item_message_my, parent, false)
+            MyMessageViewHolder(vMyMessage)
+        } else {
+            val vMessage =
+                LayoutInflater.from(parent.context).inflate(R.layout.item_message, parent, false)
+            MessageViewHolder(vMessage)
+        }
+
+    }
+
+    override fun getItemCount() = messages.size
+
+    override fun getItemViewType(position: Int): Int {
+        return if (messages[position].author == myUsername) {
+            MY_MESSAGE_TYPE
+        } else {
+            MESSAGE_TYPE
+        }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (getItemViewType(position) == MY_MESSAGE_TYPE) {
+            (holder as MyMessageViewHolder).bind(messages[position])
+        } else {
+            (holder as MessageViewHolder).bind(messages[position])
+        }
+    }
+
+    class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        fun bind(message: Message) = itemView.apply {
+            senderName.text = message.author
+            messageText.text = message.text
+            sendDate.text =
+                SimpleDateFormat("HH:mm MMM dd", Locale.getDefault()).format(message.date)
+        }
+    }
+
+    class MyMessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        fun bind(message: Message) = itemView.apply {
+            myName.text = message.author
+            myMessageText.text = message.text
+            MySendDate.text =
+                SimpleDateFormat("HH:mm MMM dd", Locale.getDefault()).format(message.date)
+        }
+    }
+}
+
+data class Message(
+    val id: Int,
+    val author: String,
+    val text: String,
+    val date: Date
+)
+```
+
+**Стало**
+
+```
+class MessagesAdapter(
+    private val myUsername: String
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    //логика без изменений
+
+    class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        fun bind(message: Message) = itemView.apply {
+            senderName.text = message.author
+            messageText.text = message.text
+            sendDate.text = message.formattedDate
+        }
+    }
+
+    class MyMessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        fun bind(message: Message) = itemView.apply {
+            myName.text = message.author
+            myMessageText.text = message.text
+            MySendDate.text = message.formattedDate
+        }
+    }
+}
+
+data class Message(
+    val id: Int,
+    val author: String,
+    val text: String,
+    val formattedDate: String
+)
+```
+
