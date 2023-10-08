@@ -327,3 +327,84 @@ data class Message(
 )
 ```
 
+**4. Было**
+```
+object ImageHelper {
+
+    fun cropToSquare(bitmap: Bitmap): Bitmap {
+        return if (bitmap.width >= bitmap.height){
+            Bitmap.createBitmap(bitmap, bitmap.width / 2 - bitmap.height / 2, 0, bitmap.height, bitmap.height)
+        } else{
+            Bitmap.createBitmap(bitmap, 0, bitmap.height / 2 - bitmap.width / 2, bitmap.width, bitmap.width)
+        }
+    }
+
+    fun rotate(bitmap: Bitmap, degree: Float): Bitmap {
+        val matrix = Matrix()
+        matrix.postRotate(degree)
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+    }
+
+    fun blur(context: Context, bitmap: Bitmap, radius: Float): Bitmap {
+        val rs = RenderScript.create(context)
+        val input = Allocation.createFromBitmap(rs, bitmap) // use this constructor for best performance, because it uses USAGE_SHARED mode which reuses memory
+        val output = Allocation.createTyped(rs, input.type)
+        ScriptIntrinsicBlur.create(rs, Element.U8_4(rs)).apply {
+            setRadius(radius)
+            setInput(input)
+            forEach(output)
+        }
+        output.copyTo(bitmap)
+        return bitmap
+    } 
+}
+```
+
+**Стало**
+
+```
+interface ImageUtil
+
+class ImageCropper : ImageUtil {
+
+    fun cropToSquare(bitmap: Bitmap): Bitmap {
+        return if (bitmap.width >= bitmap.height) {
+            cropFromCenter(bitmap, bitmap.height, bitmap.height)
+        } else {
+            cropFromCenter(bitmap, bitmap.width, bitmap.width)
+        }
+    }
+
+    private fun cropFromCenter(bitmap: Bitmap, targetWidth: Int, targetHeight: Int): Bitmap {
+        val startX = (bitmap.width - targetWidth) / 2
+        val startY = (bitmap.height - targetHeight) / 2
+        return Bitmap.createBitmap(bitmap, startX, startY, targetWidth, targetHeight)
+    }
+}
+
+class ImageRotator : ImageUtil {
+
+    fun rotate(bitmap: Bitmap, degree: Float): Bitmap {
+        val matrix = Matrix()
+        matrix.postRotate(degree)
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+    }
+}
+
+class ImageBlurrer(private val context: Context) : ImageUtil {
+
+    fun blur(bitmap: Bitmap, radius: Float): Bitmap {
+        val rs = RenderScript.create(context)
+        val blurredBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+        val input = Allocation.createFromBitmap(rs, blurredBitmap)
+        val output = Allocation.createTyped(rs, input.type)
+        ScriptIntrinsicBlur.create(rs, Element.U8_4(rs)).apply {
+            setRadius(radius)
+            setInput(input)
+            forEach(output)
+        }
+        output.copyTo(blurredBitmap)
+        return blurredBitmap
+    }
+}
+```
