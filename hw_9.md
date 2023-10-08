@@ -1,7 +1,9 @@
 **1. Было**
-<code>
+
+```
 @Serializable
 data class OrderDto(
+
     @SerialName("order_id")
     val orderId: String,
 
@@ -41,10 +43,11 @@ data class OrderDomain(
     val deliveryDate: String,
     val totalCost: String,
 )
-</code>
+```
 
 **Стало**
-<code>
+
+```
 interface Mapper<Input, Output> {
 
     fun transform(data: Input): Output
@@ -65,4 +68,5 @@ class OrderDtoToDomainMapper : Mapper<OrderDto, OrderDomain> {
         }
     }
 }
-</code>
+```
+
