@@ -48,7 +48,7 @@ Orders (денормализованная)
 - CompanyName (денормализовано из Clients)
 - ContactName (денормализовано из Clients)
 - Weight
-- Volume
+- Price
 - Origin (денормализовано из Routes)
 - Destination (денормализовано из Routes)
 - DateScheduled
