@@ -62,7 +62,7 @@ class ProfilePresenter {
                 errorMessage = error.message
             }
         })
-        viewState.value = viewState.value // Триггер обновления LiveData
+        viewState.value = viewState.value // Вызов обновления LiveData
     }
 }
 
@@ -70,10 +70,10 @@ class ProfilePresenter {
 profilePresenter.viewState.observe(this, Observer { state ->
     progressBar.visible = state.isLoading
     state.profile?.let { profile ->
-        // отображение информации пользователя...
+        // отображение информации пользователя
     }
     state.errorMessage?.let { errorMessage ->
-        // показ ошибки...
+        // показ ошибки
     }
 })
 ```
@@ -135,8 +135,8 @@ data class AppState(
 )
 
 data class User(
-    var username: String,   // Изменяемое поле
-    var email: String       // Изменяемое поле
+    var username: String, // Мутабельное переменная
+    var email: String // Мутабельная переменная
 )
 
 class UserReducer {
@@ -168,12 +168,11 @@ store.dispatch(UserAction.UpdateEmail("newEmail@domain.com"))
 ```kotlin
 data class AppState(
     val user: User,
-    // другие поля состояния
 )
 
 data class User(
-    val username: String,   // Неизменяемое поле
-    val email: String       // Неизменяемое поле
+    val username: String, // Мутабельное переменная
+    val email: String // Мутабельное переменная
 )
 
 class UserReducer {
