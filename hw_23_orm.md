@@ -117,7 +117,7 @@ fun sumExpensesByCategory(db: SQLiteDatabase, startDate: Long, endDate: Long): M
 
 ### Сценарий 1: sumExpensesByCategory
 
-ORM:
+Room:
 
 ```kotlin
 
