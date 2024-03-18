@@ -184,7 +184,7 @@ class Order(val orderId: String) {
 **Было:**
 
 ```kotlin
-class NavigationManager {
+class NavController {
     var currentPage: String = "Home"
     var isAuthenticated: Boolean = false
 
