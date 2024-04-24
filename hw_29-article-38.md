@@ -75,7 +75,7 @@ class FragmentScreen : Fragment {
 ```kotlin
 class WidgetsToBannersMapper {
     fun map(widgets: List<Width>): List<Banner> {
-        // Перевод
+        // отображение одного типа в другой
         
         return emptyList()
     }
