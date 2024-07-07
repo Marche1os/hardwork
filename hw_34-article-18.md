@@ -1,0 +1,150 @@
+### Пример 1. Иерархия для классов сценариев для автоматизации процессов в умном доме
+
+```kotlin
+abstract class HomeScenario {
+    abstract fun execute()
+}
+
+/**
+ * Сценарий, который автоматически запускается в определенное время
+ */
+abstract class TimeBasedScenario : HomeScenario()
+
+/**
+ * Сценарий, который автоматически запускается на определенное событие (например, открытие уход из дома)
+ */
+abstract class EventBasedScenartio : HomeScenario()
+
+/**
+ * 
+ */
+class MorningScenario : TimeBasedScenario() {
+    override fun execute() {
+        TODO("Выполнения утреннего сценария")
+    }
+}
+
+class LeaveScenartion : TemplateScenario() {
+    override fun execute() {
+        TODO("Выполнение сценария на момент ухода из дома")
+    }
+}
+```
+
+### Пример 2. Абстракция панели управления устройством
+
+```kotlin
+ // Взаимодействие с пользователями
+abstract class UserInteraction {
+    abstract fun interact()
+}
+
+// Управление голосом
+abstract class VoiceControl : UserInteraction()
+
+class VoiceCommand : VoiceControl() {
+    override fun interact() {
+        TODO("обработка голосовой команды")
+    }
+}
+
+// Управление через приложение
+abstract class AppControl : UserInteraction()
+
+class AppCommand : AppControl() {
+    override fun interact() {
+        TODO("обработка команды из приложения")
+    }
+}
+```
+
+В примерах классы `TimeBasedScenario`, `EventBasedScenartio` из 1-го примера и `VoiceControl`, `AppControl` из примера 2 выделены как отдельные абстрактные классы для уточнения иерархии, однако от обоих можно легко отказаться без потери функциональности.
+
+### interface dispatch 
+
+Используя свойство Kotlin можно видоизменить иерархию, выделить классы не по представлению, а по их действиям.
+Это позволит нам работать с некоторым абстрактным свойством, которым в принципе могут обладать любые несвязанные между собой сущности.
+
+Например,
+
+```kotlin
+interface Executable {
+    fun execute()
+}
+
+interface TimeBasedExecutable : Executable {
+    fun scheduleTask()
+}
+
+interface EventBasedExecutable : Executable {
+    fun respondToEvent()
+}
+
+class MorningRoutine : TimeBasedExecutable {
+    override fun execute() {
+        // executing morning routine
+    }
+
+    override fun scheduleTask() {
+        // scheduling morning tasks
+    }
+}
+```
+
+или
+
+```kotlin
+interface Interactable {
+    fun interact()
+}
+
+interface VoiceInteractable : Interactable {
+    fun processVoiceCommand()
+}
+
+interface AppInteractable : Interactable {
+    fun processAppCommand()
+}
+
+class VoiceCommandHandler : VoiceInteractable {
+    override fun interact() {
+        // interacting with voice command
+    }
+
+    override fun processVoiceCommand() {
+        // processing voice command
+    }
+}
+
+class AppCommandHandler : AppInteractable {
+    override fun interact() {
+        // interacting with app command
+    }
+
+    override fun processAppCommand() {
+        // processing app command
+    }
+}
+```
+
+### Другие подходы
+
+Один из универсальных подходов, который можно использовать - это разделение на слои, разделение доменной и внешних компонентов.
+Для этого потребуется расширить примеры, добавив в них различную логику, включающую взаимодействие с остальными компонентами системы.
+
+В качестве еще одного подхода, который может относиться к теме занятия, является отказ от примитивных типов данных в пользу создания доменно-ориентированных типов данных
+с корректными для наших задач множеством операций и значений.
+
+### Заключение
+
+В занятии практически отработали пересмотр иерархии классов, возможно отказ от промежуточных абстрактных классов в иерархии позволит снизить когнитивную нагрузку на разработчиков.
+Следующим шагом мы попытались вовсе отказаться от четкой иерархии в пользу автономных интерфейсов. Далее есть автономные классы, реализующие эти интерфейсы, притом классов может быть множество несвязных между собой.
+Это действие сделало систему более гибкой и легко расширяемой. Такой подход особенно полезен при необходимости добавления новых видов событий или при изменении логики обработки существующих событий.
+
+С помощью подходов из чистой архитектуры, таких как разделение классов как модулей на слои, где мы задаем четкие интерфейсы для взаимодействия (только от нижестоящих слоев к вышестоящим), 
+созданием своей системы типов данных для нашего проекта и других, мы добиваемся больше поддерживаемости системы, делаем доступнее тестирование. 
+
+Итак, занятие, которое было сделано, имело важную практическую ценность. 
+Упрощение иерархии классов, создание интерфейсов и примененние методов из ясной архитектуры - это фундаментальные шаги в направлении создания долговечных, масштабируемых и легко поддерживаемых программных систем.
+
+
