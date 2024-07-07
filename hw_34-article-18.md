@@ -82,11 +82,11 @@ interface EventBasedExecutable : Executable {
 
 class MorningRoutine : TimeBasedExecutable {
     override fun execute() {
-        // executing morning routine
+        TODO("выполнение сценария домашняя рутина")
     }
 
     override fun scheduleTask() {
-        // scheduling morning tasks
+        TODO("планирование запуска сценария")
     }
 }
 ```
@@ -108,21 +108,21 @@ interface AppInteractable : Interactable {
 
 class VoiceCommandHandler : VoiceInteractable {
     override fun interact() {
-        // interacting with voice command
+        TODO("взаимодействие с помощью голосовой команды")
     }
 
     override fun processVoiceCommand() {
-        // processing voice command
+        TODO("выполнение голосовой команды")
     }
 }
 
 class AppCommandHandler : AppInteractable {
     override fun interact() {
-        // interacting with app command
+        TODO("взаимодействие с помощью приложения")
     }
 
     override fun processAppCommand() {
-        // processing app command
+        TODO("выполнение пользовательского ввода")
     }
 }
 ```
