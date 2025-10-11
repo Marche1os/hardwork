@@ -24,7 +24,7 @@ class ScenarioRepositoryImpl @Inject constructor(
 interface ScenarioInteractor 
 ```
 
-### 2 Использования DI для внедрения зависимостей
+### 2 
 
 ```kotlin
 interface AuthService {
